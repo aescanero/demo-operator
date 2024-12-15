@@ -1,0 +1,7 @@
+apiVersion: demo.disasterproject.com/v1alpha1
+kind: DemoAgent
+metadata:
+  name: demoagent-sample
+spec:
+  image: nginx:latest
+  port: 80
