@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "demoagent-api.fullname" . }}
+  labels:
+    {{- include "demoagent-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "demoagent-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "demoagent-api.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.rbac.serviceAccountName }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /q/health/live
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /q/health/ready
+              port: http

@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/aescanero/demo-api-quarkus
+  tag: "v0.0.1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+rbac:
+  create: true
+  serviceAccountName: demoagent-api-sa
