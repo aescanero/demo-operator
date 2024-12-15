@@ -1,0 +1,5 @@
+/home/aescanero/projects/demo-operator/api-quarkus/src/main/java/com/disasterproject/model/DemoAgentSpec.java
+/home/aescanero/projects/demo-operator/api-quarkus/src/main/java/com/disasterproject/model/DemoAgent.java
+/home/aescanero/projects/demo-operator/api-quarkus/src/main/java/com/disasterproject/rest/DemoAgentResource.java
+/home/aescanero/projects/demo-operator/api-quarkus/src/main/java/com/disasterproject/model/DemoAgentList.java
+/home/aescanero/projects/demo-operator/api-quarkus/src/main/java/com/disasterproject/service/DemoAgentService.java

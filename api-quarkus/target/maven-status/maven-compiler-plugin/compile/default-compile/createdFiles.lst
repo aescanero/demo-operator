@@ -1,0 +1,5 @@
+com/disasterproject/model/DemoAgentList.class
+com/disasterproject/model/DemoAgentSpec.class
+com/disasterproject/model/DemoAgent.class
+com/disasterproject/service/DemoAgentService.class
+com/disasterproject/rest/DemoAgentResource.class
