@@ -1,0 +1,6 @@
+replicaCount: 1
+image:
+  repository: docker.io/aescanero/demo-operator-quarkus
+  tag: "v0.0.1"
+  pullPolicy: IfNotPresent
+
