@@ -1,0 +1,43 @@
+{
+  "name": "frontend",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
+    "format": "prettier --write ./src"
+  },
+  "dependencies": {
+    "ra-data-fakerest": "^5.4.3",
+    "ra-data-simple-rest": "^5.4.3",
+    "react": "^19.0.0",
+    "react-admin": "^5.4.3",
+    "react-dom": "^19.0.0",
+    "inflection": "~3.0.0",
+    "@types/inflection": "^1.13.2",
+    "react-hook-form": "^7.54.2",
+    "reactflow": "^11.11.4",
+    "react-dnd": "16.0.1",
+    "react-dnd-html5-backend": "16.0.1",
+    "oidc-client-ts": "^3.1.0",
+    "vite": "^6.0.7",
+    "@vitejs/plugin-react": "^4.3.4"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.19.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}

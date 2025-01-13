@@ -1,0 +1,76 @@
+{
+  "tenants": [
+    {
+      "id": 0,
+      "name": "Tenant 1",
+      "description": "Description 1",
+      "componentsIds":[0,1]
+    },
+    {
+      "id": 1,
+      "name": "Tenant 2",
+      "description": "Description 2",
+      "componentsIds":[]
+    }
+  ],
+  "components": [
+    {
+      "id": 0,
+      "name": "nginx",
+      "description": "Comment 1"
+    },
+    {
+      "id": 1,
+      "name": "httpd",
+      "description": "Comment 2"
+    }
+  ],
+  "stacks": [
+    {
+      "id": 0,
+      "name": "nginx",
+      "description": "Comment 1"
+    },
+    {
+      "id": 1,
+      "name": "httpd",
+      "description": "Comment 2"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 0,
+      "name": "Task 1",
+      "description": "Description de Task 1",
+      "date": "8/29/2023 10:00:00",
+      "tenant": 0
+    },
+    {
+      "id": 1,
+      "name": "Task 2",
+      "description": "Description de Task 2",
+      "date": "8/29/2023 10:00:00",
+      "tenant": 1
+    }
+  ],
+  "logs": [
+    {
+      "id": 0,
+      "log": "Description de Log 1",
+      "date": "8/29/2023 10:00:00",
+      "task": 0
+    },
+    {
+      "id": 1,
+      "log": "Description de Log 2",
+      "date": "8/29/2023 10:00:01",
+      "task": 1
+    },
+    {
+      "id": 2,
+      "log": "Description de Log 3",
+      "date": "8/29/2023 10:00:01",
+      "task": 0
+    }
+  ]
+}

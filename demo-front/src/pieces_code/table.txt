@@ -1,0 +1,52 @@
+                     <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            {translate(
+                                'id'
+                            )}
+                        </TableCell>
+                        <TableCellRight>
+                            {translate(
+                                'name'
+                            )}
+                        </TableCellRight>
+                        <TableCellRight>
+                            {translate('description')}
+                        </TableCellRight>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        record.componentsIds.map((componentsId: number) => {
+                            const componentNumber : number = componentsId.valueOf();
+                            const { data: components, total, isLoading, error } = useGetList<Component>(
+                                'components',
+                                { 
+                                    pagination: { page: 1, perPage: 10 },
+                                    filter: { id: componentNumber },
+                                    sort: { field: 'name', order: 'DESC' }
+                                }
+                            );
+                            console.log(components);
+                            if (components) return components.map(component => {
+                                console.log(component.id);
+                                return (
+                                <TableRow>
+                                    <TableCell>
+                                        {component.id}
+                                    </TableCell>
+                                    <TableCellRight>
+                                        {component.name}
+                                    </TableCellRight>
+                                    <TableCellRight>
+                                        {component.description}
+                                    </TableCellRight>
+                                </TableRow>
+                                );
+                            }
+                            );
+                        })
+                    }
+                </TableBody>
+            </Table>
