@@ -1,0 +1,77 @@
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+
+replicaCount: 1
+
+service:
+  port: 80
+
+image:
+  repository: apache/apisix-ingress-controller
+  pullPolicy: IfNotPresent
+  tag: "1.8.3"
+
+config:
+  etcdserver:
+    enabled: false
+  logLevel: "info"
+  httpListen: ":8080"
+  httpsListen: ":8443"
+
+  apisix:
+    serviceName: apisix-admin
+    serviceNamespace: apisix
+    servicePort: 9180
+    adminKey: "edd1c9f034335f136f87ad84b625c8f1"
+    clusterName: "default"
+    # -- the APISIX admin API version. can be "v2" or "v3", default is "v2".
+    adminAPIVersion: "v3"
+
+    # -- The APISIX Helm chart supports storing user credentials in a secret.
+    # The secret needs to contain a single key for admin token with key adminKey by default.
+    existingSecret: "apisix-admin-apikey"
+    # -- Name of the admin token key in the secret, overrides the default key name "adminKey"
+    existingSecretAdminKeyKey: "admin-apikey"
+
+resources: {}
+
+autoscaling:
+  enabled: false
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+
+serviceMonitor:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+
+gateway:
+  type: NodePort
+  externalTrafficPolicy: Cluster
+  resources: {}
+  tls:
+    enabled: false
+    servicePort: 443
+    containerPort: 9443
+    # -- Support multiple https ports, See [Configuration](https://github.com/apache/apisix/blob/0bc65ea9acd726f79f80ae0abd8f50b7eb172e3d/conf/config-default.yaml#L99)
+    additionalContainerPorts: []
+      # - ip: 127.0.0.3           # Specific IP, If not set, the default value is `0.0.0.0`.
+      #   port: 9445
+      #   enable_http2: true
+    # -- Specifies the name of Secret contains trusted CA certificates in the PEM format used to verify the certificate when APISIX needs to do SSL/TLS handshaking with external services (e.g. etcd)
+    existingCASecret: ""
+    # -- Filename be used in the gateway.tls.existingCASecret
+    certCAFilename: ""
+    http2:
+      enabled: true
+    # -- TLS protocols allowed to use.
+    sslProtocols: "TLSv1.2 TLSv1.3"
+    # -- Define SNI to fallback if none is presented by client
+    fallbackSNI: ""

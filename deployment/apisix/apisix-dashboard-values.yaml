@@ -1,0 +1,35 @@
+enabled: true
+service:
+  type: ClusterIP
+config:
+  authentication:
+    secret: "dashboard-secret-key"
+    expire_time: 3600
+    users:
+      - username: admin
+        password: admin123
+  conf:
+    etcd:
+      endpoints:
+        - "http://apisix-etcd.apisix.svc.cluster.local:2379"
+      prefix: "/apisix"
+      username: "root"
+      password: "test"
+      existingSecret: "apisix-etcd-root"
+      secretPasswordKey: "root-password"
+ingress:
+  enabled: true
+  className: "nginx"
+  # -- Ingress annotations
+  annotations:
+    cert-manager.io/issuer: "letsencrypt-apisix"
+    cert-manager.io/common-name: apisix.disasterproject.com
+  hosts:
+    - host: apisix.disasterproject.com
+      paths: 
+        - /*
+  tls:
+    - secretName: apisix-dashboard-tls
+      hosts:
+        - apisix.disasterproject.com
+

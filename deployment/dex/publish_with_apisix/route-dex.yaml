@@ -1,0 +1,36 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: dex-routes
+  namespace: dex
+spec:
+  http:
+    - name: dex-main
+      match:
+        hosts:
+          - demo.disasterproject.com
+        paths:
+          - "/.well-known/*"
+          - "/auth/*"
+          - "/keys"
+          - "/userinfo"
+          - "/device/code"
+          - "/token/introspect"
+      backends:
+        - serviceName: dex
+          servicePort: 5556
+          weight: 100
+      plugins:
+        - name: cors
+          enable: true
+          config:
+            allow_origins: "https://demo.disasterproject.com"
+            allow_methods: "GET,POST,OPTIONS"
+            allow_headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+            expose_headers: "Content-Length,Content-Range"
+            max_age: 3600
+            allow_credentials: true
+        - name: proxy-rewrite
+          enable: true
+          config:
+            scheme: https

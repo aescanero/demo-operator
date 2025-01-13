@@ -1,0 +1,46 @@
+# Route para el frontend
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: front
+  namespace: demo
+spec:
+  http:
+    - name: front-main
+      priority: 100
+      match:
+        hosts:
+          - demo.disasterproject.com
+        paths:
+          - "/"
+          - "/*.js"
+          - "/*.jpg"
+          - "/*.png"
+          - "/*.ico"
+          - "/*.html"
+          - "/*.css"
+        methods:
+          - GET
+      backends:
+        - serviceName: front
+          servicePort: 80
+          weight: 100
+      plugins:
+        - name: cors
+          enable: true
+          config:
+            allow_origins: "https://demo.disasterproject.com"
+            allow_methods: "GET,OPTIONS"
+            allow_headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type"
+            expose_headers: "Content-Length"
+            max_age: 3600
+            allow_credential: true
+        - name: response-rewrite
+          enable: true
+          config:
+            headers:
+              set:
+                Strict-Transport-Security: "max-age=31536000; includeSubDomains"
+                X-Frame-Options: "DENY"
+                X-Content-Type-Options: "nosniff"
+                Cache-Control: "public, max-age=31536000"

@@ -1,0 +1,9 @@
+apiVersion: dex.coreos.com/v1
+kind: Connector
+metadata:
+  name: mock
+  namespace: dex
+spec:
+  type: mockCallback
+  id: mock
+  name: Test

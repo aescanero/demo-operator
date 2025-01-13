@@ -1,0 +1,61 @@
+
+---
+# Routes Configuration
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: demo-routes
+  namespace: apisix
+spec:
+  http:
+    # Frontend Route
+    - name: frontend-route
+      priority: 1
+      match:
+        hosts:
+          - demo.disasterproject.com
+        paths:
+          - /*
+      backends:
+        - serviceName: frontend-service
+          servicePort: 80
+      plugins:
+        - name: response-rewrite
+          enable: true
+          config:
+            headers:
+              set:
+                Strict-Transport-Security: "max-age=31536000; includeSubDomains"
+                X-Frame-Options: "DENY"
+                X-Content-Type-Options: "nosniff"
+                Content-Security-Policy: "default-src 'self' https://demo.disasterproject.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+
+    # Token Service Route
+    - name: token-route
+      priority: 2
+      match:
+        hosts:
+          - demo.disasterproject.com
+        paths:
+          - /token/*
+      backends:
+        - serviceName: token-service
+          servicePort: 8000
+      plugins:
+        - name: cors
+          enable: true
+          config:
+            allow_origins: "https://demo.disasterproject.com"
+            allow_methods: "POST,OPTIONS"
+            allow_headers: "Content-Type,Authorization"
+            expose_headers: "Content-Length"
+            max_age: 3600
+            allow_credential: true
+        - name: limit-req
+          enable: true
+          config:
+            rate: 10
+            burst: 20
+            rejected_code: 429
+            key_type: "var"
+            key: "remote_addr"

@@ -1,0 +1,12 @@
+# ApisixTls Resource
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: demo-tls
+  namespace: apisix
+spec:
+  hosts:
+    - demo.disasterproject.com
+  secret:
+    name: demo-tls-secret
+    namespace: apisix

@@ -1,0 +1,110 @@
+nodeSelector:
+  "eks.amazonaws.com/nodegroup": arch
+
+serviceAccount:
+  create: false
+
+rbac:
+  create: false
+
+service:
+  type: NodePort
+  externalTrafficPolicy: Cluster
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 9080
+    # additionalContainerPorts:
+    #   - port: 9081
+    #     enable_http2: true          # If not set, the default value is `false`.
+  tls:
+    servicePort: 443
+
+  stream:
+    enabled: false
+
+ingress:
+  enabled: true
+  className: "alb"
+  annotations:
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/group.name: arch-alb
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/success-codes: 200,404
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true
+    alb.ingress.kubernetes.io/load-balancer-name: arch-alb
+    alb.ingress.kubernetes.io/manage-backend-security-group-rules: "false"
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/security-groups: sg-05b08cf8e4ec7b18c, sg-073094fddb49d80c3, sg-0e915facf2e6c85a3
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    alb.ingress.kubernetes.io/subnets: subnet-0ab570d23ef1a3265, subnet-02ea0a6cfbbd9e895
+    alb.ingress.kubernetes.io/tags: Environment=NONPRO,CreatedBy=alejandro.escanero,Type=AppID,Application=AlexandrIA,ISTO_Containers=AWS-EKS
+    alb.ingress.kubernetes.io/target-type: instance
+    external-dns.alpha.kubernetes.io/target: nlb-CORE-NONPROD-Comm-hub-vpn-caa8677681ecdc89.elb.eu-west-1.amazonaws.com
+    cert-manager.io/cluster-issuer: kong-issuer
+    cert-manager.io/common-name: api.arch.alexandria-nonprod.atc-cloudsolutions.com
+  hosts:
+    - host: api.arch.alexandria-nonprod.atc-cloudsolutions.com
+      paths: 
+        - /*
+  tls:
+    - secretName: apisix-dashboard-tls
+      hosts:
+        - api.arch.alexandria-nonprod.atc-cloudsolutions.com
+
+control:
+  enabled: false
+
+metrics:
+  serviceMonitor:
+    enabled: false
+
+apisix:
+  enableHTTP2: true
+  ssl:
+    enabled: false
+  enableIPv6: false
+  admin:
+    enabled: false  # Deshabilitamos el admin API en el data plane
+  deployment:
+    mode: decoupled
+    role: "data_plane"
+    role_data_plane:
+      config_provider: control_plane
+      control_plane:
+        host:
+            - https://${Control_Plane_IP}:9280
+        prefix: /apisix
+        timeout: 30
+  discovery:
+    enabled: true
+  vault:
+    enabled: false
+  prometheus:
+    enabled: false
+  extPlugin:
+    enabled: false
+  wasm:
+    enabled: false
+  customPlugins:
+    enabled: false
+
+externalEtcd:
+  host:
+    - "http://etcd.apisix.svc.cluster.local:2379"
+  prefix: "/apisix"
+  timeout: 30
+  username: "root"
+  existingSecret: "apisix-creds"
+  secretPasswordKey: "etcd-root-password"
+  tls:
+    enabled: true
+    existingSecret: "etcd-crt-secret"
+    certFilename: "tls.crt"
+    certKeyFilename: "tls.key"
+    caFilename: "ca.crt"
+    sni: etcd.apisix.svc.cluster.local
+
+etcd:
+  enabled: false

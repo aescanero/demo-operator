@@ -1,0 +1,109 @@
+enabled: true
+etcd:
+  enabled: false
+deployment:
+  mode: decoupled
+  role: "control_plane"
+externalEtcd:
+  host:
+    - "http://apisix-etcd.apisix.svc.cluster.local:2379"
+  prefix: "/apisix"
+  timeout: 30
+  username: "root"
+  existingSecret: "apisix-etcd-root"
+  secretPasswordKey: "root-password"
+  tls:
+    enabled: true
+    existingSecret: "etcd-crt-secret"
+    certFilename: "tls.crt"
+    certKeyFilename: "tls.key"
+    caFilename: "ca.crt"
+    sni: apisix-etcd.apisix.svc.cluster.local
+
+fullnameOverride: "apisix"
+
+apisix:
+  enableIPv6: true
+  enableHTTP2: true
+  enableServerTokens: true
+  setIDFromPodUID: false
+
+  ssl:
+    enabled: false
+
+  router:
+    # -- Defines how apisix handles routing:
+    # - radixtree_uri: match route by uri(base on radixtree)
+    # - radixtree_host_uri: match route by host + uri(base on radixtree)
+    # - radixtree_uri_with_parameter: match route by uri with parameters
+    http: radixtree_host_uri
+
+  deployment:
+    mode: decoupled
+    role: "control_plane"
+
+  admin:
+    enabled: true
+    type: ClusterIP
+    credentials:
+      admin: ""
+      viewer: ""
+
+      secretName: "apisix-admin-apikey"
+      secretAdminKey: "admin-apikey"
+      secretViewerKey: "viewer-apikey"
+
+    allow:
+      ipList:
+        - 0.0.0.0/0
+    cors: true
+
+    ingress:
+      enabled: false
+     
+  # Data Plane configuration
+  replicas: 2
+  kind: Deployment
+  resources:
+    requests:
+      cpu: 300m
+      memory: 300Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+    discovery:
+      enabled: true
+      registry:
+        type: kubernetes
+        kubernetes:
+          enabled: true
+          
+    plugins:
+      - openid-connect
+      - prometheus
+      - cors
+      - ip-restriction
+      - limit-count
+      - limit-req
+    
+dashboard:
+  enabled: false
+
+ingress-controller:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+resources: {}
+nodeSelector: {}
+timezone: ""
+
+autoscaling:
+  enabled: false
+
+serviceAccount:
+  create: false
+
+rbac:
+  create: false

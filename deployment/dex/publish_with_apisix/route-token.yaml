@@ -1,0 +1,38 @@
+
+---
+# Routes Configuration
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: token
+  namespace: dex
+spec:
+  http:
+    - name: token-route
+      priority: 2
+      match:
+        hosts:
+          - demo.disasterproject.com
+        paths:
+          - /token/*
+      backends:
+        - serviceName: token-service
+          servicePort: 8000
+      plugins:
+        - name: cors
+          enable: true
+          config:
+            allow_origins: "https://demo.disasterproject.com"
+            allow_methods: "POST,OPTIONS"
+            allow_headers: "Content-Type,Authorization"
+            expose_headers: "Content-Length"
+            max_age: 3600
+            allow_credential: true
+        - name: limit-req
+          enable: true
+          config:
+            rate: 10
+            burst: 20
+            rejected_code: 429
+            key_type: "var"
+            key: "remote_addr"

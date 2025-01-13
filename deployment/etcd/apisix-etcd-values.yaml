@@ -1,0 +1,58 @@
+image:
+  repository: gcr.io/etcd-development/etcd
+  tag: v3.5.17
+  pullPolicy: IfNotPresent
+
+replicas: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 400m
+    memory: 256Gi
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 500Mi
+
+service:
+  type: NodePort
+  clientPort: 2379
+  peerPort: 2380
+
+tls:
+  enabled: true
+  # Usar cert-manager para generar certificados
+  certManager:
+    enabled: true
+    issuerRef:
+      name: "apisix-issuer-intermediate"
+      kind: ClusterIssuer
+    dnsNames: []
+    
+  # Usar secretos existentes
+  existingSecrets:
+    enabled: false
+    server:
+      secretName: ""
+      certFile: tls.crt
+      keyFile: tls.key
+      caFile: ca.crt
+    peer:
+      secretName: ""
+      certFile: tls.crt
+      keyFile: tls.key
+      caFile: ca.crt
+
+configuration:
+  initialClusterState: new
+  initialClusterToken: etcd-cluster-1
+  autoCompactionRetention: "1"
+  quotaBackendBytes: "8589934592"
+
+auth:
+  enabled: true
+  existingSecret: "apisix-etcd-root"

@@ -1,0 +1,13 @@
+# Certificate Resource
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: demo-cert
+  namespace: apisix
+spec:
+  secretName: demo-tls-secret
+  dnsNames:
+    - demo.disasterproject.com
+  issuerRef:
+    name: letsencrypt-apisix
+    kind: ClusterIssuer

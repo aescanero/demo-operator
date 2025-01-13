@@ -1,0 +1,29 @@
+# Upstream para el frontend
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: front
+  namespace: demo
+spec:
+  loadbalancer:
+    type: roundrobin
+  healthCheck:
+    passive:
+      unhealthy:
+        httpCodes:
+          - 500
+          - 502
+          - 503
+          - 504
+        httpFailures: 3
+    active:
+      type: http
+      httpPath: /
+      timeout: 5
+      host: www.foo.com
+      healthy:
+        successes: 3
+        interval: 2s
+        httpCodes:
+          - 200
+          - 206

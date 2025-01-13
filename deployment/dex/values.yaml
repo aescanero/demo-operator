@@ -1,0 +1,113 @@
+config:
+  issuer: https://demo.disasterproject.com
+  storage:
+    type: kubernetes
+    config:
+      inCluster: true
+  web:
+    http: 0.0.0.0:5556
+  enablePasswordDB: true
+  grpc:
+    http: 0.0.0.0:5557
+  expiry:
+    signingKeys: "6h"
+    idTokens: "24h"
+  logger:
+    #name: "json"
+    level: "debug"
+  # Configuración de OAuth2
+  oauth2:
+    skipApprovalScreen: true
+    responseTypes: ["code", "token", "id_token"]
+  staticClients:
+    - id: "front"
+      redirectURIs:
+        - "https://demo.disasterproject.com/callback"
+        - "http://localhost:5173/callback"
+      name: "Front"
+      secret: $FRONT_PW
+    - id: "apisix"
+      redirectURIs:
+        - "https://demo.disasterproject.com/callback"
+        - "http://localhost:5173/callback"
+      name: "Apisix"
+      secret: $APISIX_PW
+    - id: "token"
+      redirectURIs:
+        - "https://demo.disasterproject.com/callback"
+        - "http://localhost:5173/callback"
+      name: "Token Service"
+      secret: $TOKEN_PW
+  connectors:
+  - type: mockCallback
+    id: mock
+    name: mock
+  - type: ldap
+    id: ldap
+    name: ldap
+    config:
+      host: ldap-ldap.dex.svc.cluster.local:1686
+      # Descomenta la siguiente línea si usas LDAPS
+      insecureNoSSL: true
+      
+      # Configuración del bind DN para búsquedas
+      bindDN: cn=admin,dc=example,dc=org
+      bindPW: LDAP_BIND_PW
+      
+      userSearch:
+        baseDN: dc=example,dc=org
+        filter: "(objectClass=person)"
+        username: uid
+        # Si usas campos específicos para nombre y email
+        idAttr: uid
+        emailAttr: mail
+        nameAttr: cn
+
+      groupSearch:
+        baseDN: dc=example,dc=org
+        filter: "(objectClass=groupOfNames)"
+        # Atributos para los grupos
+        userAttr: DN
+        groupAttr: member
+        nameAttr: cn
+
+
+volumeMounts:
+  - name: tls
+    mountPath: /etc/dex/tls
+    readOnly: true
+
+volumes:
+  - name: tls
+    secret:
+      secretName: dex-tls
+
+service:
+  type: NodePort
+  ports:
+    http:
+      port: 5556
+    https:
+      port: 5554
+
+envVars:
+  - name: LDAP_BIND_PW
+    valueFrom:
+      secretKeyRef:
+        name: ldap-admin-secret
+        key: password
+  - name: FRONT_PW
+    valueFrom:
+      secretKeyRef:
+        name: front-secret
+        key: password
+  - name: APISIX_PW
+    valueFrom:
+      secretKeyRef:
+        name: apisix-secret
+        key: password
+  - name: TOKEN_PW
+    valueFrom:
+      secretKeyRef:
+        name: token-secret
+        key: password
